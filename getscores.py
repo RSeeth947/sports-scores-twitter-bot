@@ -2,17 +2,24 @@ from bs4 import BeautifulSoup
 import requests
 
 url = 'https://www.espn.com/soccer/match/_/gameId/635042'
+mls_url = 'https://www.mlssoccer.com/competitions/u-s-open-cup/2022/matches/lavssac-06-21-2022/feed'
 
 result = requests.get(url)
+mls_result = requests.get(mls_url).text
+
 doc = BeautifulSoup(result.text, "html.parser")
+mls_doc = BeautifulSoup(mls_result, "html.parser")
 
 
 class GameInfo:
 
     def __init__(self, url):
         self.url = url
-        self.result = requests.get(url)
+        self.comment_url = url[1]
+        self.result = requests.get(self.url)
+        self.comment_results = requests.get(self.comment_url)
         self.doc = BeautifulSoup(self.result.text, "html.parser")
+        self.comment_doc = BeautifulSoup(self.comment_results.text, "html.parser")
 
     def refresh(self):
         self.result = requests.get(self.url)
@@ -53,5 +60,8 @@ class GameInfo:
     def post_comments(self):
         pass
 
-    
-x = doc.find_all('div', class_='content')
+ 
+x = doc.find_all(class_="mls-o-match-feed__comment")
+print(x)
+
+
