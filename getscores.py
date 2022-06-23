@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
-url = 'https://www.espn.com/soccer/match/_/gameId/635042'
-comment_url = 'https://www.espn.com/soccer/commentary?gameId=635044'
+url = 'https://www.espn.com/soccer/match?gameId=634079'
+comment_url = 'https://www.espn.com/soccer/commentary?gameId=634079'
 
 result = requests.get(url)
 comment_result = requests.get(comment_url).text
@@ -26,10 +26,10 @@ class GameInfo:
         self.doc = BeautifulSoup(self.result.text, "html.parser")
 
         self.comment_result = requests.get(self.comment_url)
-        self.comment.doc = BeautifulSoup(self.comment_result.text, "html.parser")
+        self.comment_doc = BeautifulSoup(self.comment_result.text, "html.parser")
 
 
-    def score_change(scores, current_score):
+    def score_change(self, scores, current_score):
         if current_score not in scores:
             return True
         
@@ -60,20 +60,15 @@ class GameInfo:
         awayscore = self.doc.find('span', class_="score icon-font-before").text.strip()
         return awayscore
 
-    def post_comments(self, comment_list):
+   
+    def get_comment(self):
         container = self.comment_doc.find('div', id='match-commentary-1-tab-2')
-        comment_data = container.find_all('tr')
+        comment_info = container.find('tr')
 
-        for item in comment_data:
-            comment = (item.find('td', class_='time-stamp').text,item.find('td', class_='game-details').string.strip())
-            if comment not in comment_list:
-                tweet = f"{comment[0]}: {comment[1]}"
-                comment_list.append(comment)
-                return tweet
-
-        return False
-
-
+        time_comment = (comment_info.find('td', class_='time-stamp').text,comment_info.find('td', class_='game-details').string.strip())
+        tweet = f"{time_comment[0]}: {time_comment[1]}"
+        return tweet
+                 
 
 
 
