@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
-url = 'https://www.espn.com/soccer/match?gameId=634079'
-comment_url = 'https://www.espn.com/soccer/commentary?gameId=634079'
+url = ''
+comment_url = ''
 
 result = requests.get(url)
 comment_result = requests.get(comment_url).text
